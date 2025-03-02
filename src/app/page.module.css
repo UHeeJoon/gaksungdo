@@ -1,0 +1,41 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.button {
+  padding: 0.5rem 1rem;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #0070f3;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background-color: #0051b3;
+}
+
+.imageContainer {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+} 
