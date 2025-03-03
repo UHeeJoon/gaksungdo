@@ -10,7 +10,7 @@ export default function Home() {
   const fetchAnimalImage = async (type: 'cat' | 'dog') => {
     setIsLoading(true)
     try {
-      let url = `https://api.the${type === 'dog' ? 'dog' : 'cat'}api.com/v1/images/search`;
+      const url = `https://api.the${type === 'dog' ? 'dog' : 'cat'}api.com/v1/images/search`;
       const response = await fetch(url)
       const data = await response.json()
       setImageUrl(data[0]?.url)
