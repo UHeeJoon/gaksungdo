@@ -1,25 +1,32 @@
 'use client'
-import { useState } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import Image from 'next/image'
 import styles from './page.module.css'
 
 export default function Home() {
   const [imageUrl, setImageUrl] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isImageLoading, setIsImageLoading] = useState<boolean>(true);
   
-  const fetchAnimalImage = async (type: 'cat' | 'dog') => {
-    setIsLoading(true)
+  const apiUrls = useMemo(() => ({
+    cat: 'https://api.thecatapi.com/v1/images/search?size=small',
+    dog: 'https://api.thedogapi.com/v1/images/search?size=small'
+  }), []);
+  
+  const fetchAnimalImage = useCallback(async (type: 'cat' | 'dog') => {
+    setIsLoading(true);
+    setIsImageLoading(true);
     try {
-      const url = `https://api.the${type === 'dog' ? 'dog' : 'cat'}api.com/v1/images/search`;
-      const response = await fetch(url)
-      const data = await response.json()
-      setImageUrl(data[0]?.url)
+      const response = await fetch(apiUrls[type]);
+      const data = await response.json();
+      setImageUrl(data[0]?.url || '');
     } catch (error) {
-      console.error('이미지를 가져오는데 실패했습니다:', error)
+      console.error('이미지를 가져오는데 실패했습니다:', error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  }, [apiUrls]);
+
 
   return (
     <main className={styles.main}>
@@ -41,24 +48,29 @@ export default function Home() {
       </div>
 
       <div className={styles.imageContainer}>
-        {isLoading ? (
-          <div className={styles.spinnerContainer}>
-            <div className={styles.spinner}></div>
-          </div>
-        ) : (
-          imageUrl && (
-            <div className={styles.imageWrapper}>
+        <div className={styles.imageWrapper}>
+          {(isLoading || !imageUrl) ? (
+            <div className={styles.skeleton}></div>
+          ) : (
+            <>
+              {isImageLoading && <div className={styles.skeleton}></div>}
               <Image 
                 src={imageUrl}
                 alt="동물 이미지"
-                fill
-                sizes="(max-width: 500px) 100vw, 500px"
+                width={500}
+                height={500}
+                sizes="(max-width: 768px) 100vw, 500px"
+                className={`${styles.image} ${!isImageLoading ? styles.loaded : ''}`}
                 priority
-                className={styles.image}
+                quality={75}
+                style={{ width: '100%', height: 'auto' }}
+                onLoad={(event) => {
+                  setIsImageLoading(false);
+                }}
               />
-            </div>
-          )
-        )}
+            </>
+          )}
+        </div>
       </div>
     </main>
   )
