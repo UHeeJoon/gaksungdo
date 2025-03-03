@@ -1,18 +1,22 @@
 'use client'
 import { useState } from 'react'
+import Image from 'next/image'
 import styles from './page.module.css'
 
 export default function Home() {
   const [imageUrl, setImageUrl] = useState<string>('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   
   const fetchAnimalImage = async (type: 'cat' | 'dog') => {
+    setIsLoading(true)
     try {
       const response = await fetch(`https://g92maytncj.execute-api.ap-northeast-2.amazonaws.com/dev/${type === 'dog' ? '?type=dog' : ''}`)
       const data = await response.json()
-      console.log(data)
       setImageUrl(data.url)
     } catch (error) {
       console.error('이미지를 가져오는데 실패했습니다:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -22,26 +26,39 @@ export default function Home() {
         <button 
           onClick={() => fetchAnimalImage('cat')}
           className={styles.button}
+          disabled={isLoading}
         >
           고양이 보기
         </button>
         <button 
           onClick={() => fetchAnimalImage('dog')}
           className={styles.button}
+          disabled={isLoading}
         >
           강아지 보기
         </button>
       </div>
 
-      {imageUrl && (
-        <div className={styles.imageContainer}>
-          <img 
-            src={imageUrl} 
-            alt="동물 이미지" 
-            className={styles.image}
-          />
-        </div>
-      )}
+      <div className={styles.imageContainer}>
+        {isLoading ? (
+          <div className={styles.spinnerContainer}>
+            <div className={styles.spinner}></div>
+          </div>
+        ) : (
+          imageUrl && (
+            <div className={styles.imageWrapper}>
+              <Image 
+                src={imageUrl}
+                alt="동물 이미지"
+                fill
+                sizes="(max-width: 500px) 100vw, 500px"
+                priority
+                className={styles.image}
+              />
+            </div>
+          )
+        )}
+      </div>
     </main>
   )
 } 
