@@ -10,9 +10,10 @@ export default function Home() {
   const fetchAnimalImage = async (type: 'cat' | 'dog') => {
     setIsLoading(true)
     try {
-      const response = await fetch(`https://g92maytncj.execute-api.ap-northeast-2.amazonaws.com/dev/${type === 'dog' ? '?type=dog' : ''}`)
+      let url = `https://api.the${type === 'dog' ? 'dog' : 'cat'}api.com/v1/images/search`;
+      const response = await fetch(url)
       const data = await response.json()
-      setImageUrl(data.url)
+      setImageUrl(data[0]?.url)
     } catch (error) {
       console.error('이미지를 가져오는데 실패했습니다:', error)
     } finally {
