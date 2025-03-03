@@ -64,7 +64,7 @@ export default function Home() {
                 priority
                 quality={75}
                 style={{ width: '100%', height: 'auto' }}
-                onLoad={(event) => {
+                onLoad={() => {
                   setIsImageLoading(false);
                 }}
               />
